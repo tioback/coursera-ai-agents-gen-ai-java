@@ -1,0 +1,3 @@
+[submodule "course-materials/ai-agents-java"]
+	path = course-materials/ai-agents-java
+	url = https://github.com/tioback/ai-agents-java.git
