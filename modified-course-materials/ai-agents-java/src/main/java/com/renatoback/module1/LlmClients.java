@@ -18,13 +18,15 @@ public final class LlmClients {
         String provider = getenv("LLM_PROVIDER", "openai").toLowerCase();
 
         return switch (provider) {
-            // Add implementations as you create them
-            // case "ollama" -> new OllamaLlmClient(...);
+            case "ollama" -> new OllamaLlmClient(
+                    getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+                    getenv("OLLAMA_MODEL", "llama3.1")
+            );
             // case "anthropic" -> new AnthropicLlmClient(...);
             // case "gemini" -> new GeminiLlmClient(...);
             case "openai" -> new OpenAiLlmClient();
             default -> throw new IllegalArgumentException(
-                    "Unsupported LLM_PROVIDER='" + provider + "'. Supported: openai"
+                    "Unsupported LLM_PROVIDER='" + provider + "'. Supported: openai, ollama"
             );
         };
     }
