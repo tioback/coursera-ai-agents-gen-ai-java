@@ -1,5 +1,10 @@
 package com.renatoback.module1;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -11,10 +16,12 @@ import java.util.List;
 /**
  * LLM client for a local Ollama server.
  *
- * This implementation is intentionally minimal and uses the /api/generate
- * endpoint with {@code stream=false} to receive a single JSON response.
+ * Uses the /api/chat endpoint with {@code stream=false} so that
+ * per-message roles are preserved.
  */
 public class OllamaLlmClient implements LlmClient {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final HttpClient httpClient;
     private final String baseUrl;
@@ -30,27 +37,10 @@ public class OllamaLlmClient implements LlmClient {
 
     @Override
     public String generateResponse(List<Message> messages) {
-        StringBuilder promptBuilder = new StringBuilder();
-        for (Message message : messages) {
-            promptBuilder
-                    .append(message.getRole())
-                    .append(": ")
-                    .append(message.getContent())
-                    .append("\n");
-        }
-
-        String prompt = promptBuilder.toString();
-
-        String requestBody = """
-                {
-                  "model": %s,
-                  "prompt": %s,
-                  "stream": false
-                }
-                """.formatted(toJsonString(model), toJsonString(prompt));
+        String requestBody = buildRequestBody(messages);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "/api/generate"))
+                .uri(URI.create(baseUrl + "/api/chat"))
                 .timeout(Duration.ofSeconds(60))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
@@ -65,9 +55,44 @@ public class OllamaLlmClient implements LlmClient {
                         + ": " + response.body());
             }
 
-            return extractResponseField(response.body());
+            return extractAssistantMessage(response.body());
         } catch (Exception e) {
             throw new RuntimeException("Error calling Ollama at " + baseUrl, e);
+        }
+    }
+
+    private String buildRequestBody(List<Message> messages) {
+        try {
+            ObjectNode root = MAPPER.createObjectNode();
+            root.put("model", model);
+            root.put("stream", false);
+
+            ArrayNode msgArray = root.putArray("messages");
+            for (Message message : messages) {
+                ObjectNode m = msgArray.addObject();
+                m.put("role", message.getRole().name().toLowerCase());
+                m.put("content", message.getContent());
+            }
+
+            return MAPPER.writeValueAsString(root);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to build Ollama /api/chat request body", e);
+        }
+    }
+
+    private String extractAssistantMessage(String body) {
+        try {
+            JsonNode root = MAPPER.readTree(body);
+            JsonNode messageNode = root.path("message");
+            JsonNode contentNode = messageNode.path("content");
+            if (!contentNode.isMissingNode() && !contentNode.isNull()) {
+                return contentNode.asText();
+            }
+            // Fallback if structure is different than expected
+            return body;
+        } catch (Exception e) {
+            // If parsing fails, return raw JSON so caller can inspect it
+            return body;
         }
     }
 
@@ -76,65 +101,6 @@ public class OllamaLlmClient implements LlmClient {
             return url.substring(0, url.length() - 1);
         }
         return url;
-    }
-
-    private static String toJsonString(String s) {
-        StringBuilder sb = new StringBuilder(s.length() + 16);
-        sb.append('"');
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            switch (c) {
-                case '\\' -> sb.append("\\\\");
-                case '"' -> sb.append("\\\"");
-                case '\n' -> sb.append("\\n");
-                case '\r' -> sb.append("\\r");
-                case '\t' -> sb.append("\\t");
-                default -> sb.append(c);
-            }
-        }
-        sb.append('"');
-        return sb.toString();
-    }
-
-    /**
-     * Very small JSON helper that extracts the "response" field from
-     * Ollama's /api/generate JSON response. For example:
-     *
-     * {"model":"...","response":"Hello world","done":true,...}
-     *
-     * If the field cannot be found, the raw JSON is returned.
-     */
-    private static String extractResponseField(String json) {
-        String key = "\"response\":\"";
-        int start = json.indexOf(key);
-        if (start < 0) {
-            return json;
-        }
-        int i = start + key.length();
-        StringBuilder result = new StringBuilder();
-        boolean escape = false;
-        while (i < json.length()) {
-            char c = json.charAt(i++);
-            if (escape) {
-                // Handle a few common escape sequences
-                switch (c) {
-                    case 'n' -> result.append('\n');
-                    case 'r' -> result.append('\r');
-                    case 't' -> result.append('\t');
-                    case '"' -> result.append('"');
-                    case '\\' -> result.append('\\');
-                    default -> result.append(c);
-                }
-                escape = false;
-            } else if (c == '\\') {
-                escape = true;
-            } else if (c == '"') {
-                break;
-            } else {
-                result.append(c);
-            }
-        }
-        return result.toString();
     }
 }
 
