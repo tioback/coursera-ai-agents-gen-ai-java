@@ -6,19 +6,21 @@ package com.renatoback.module1;
  */
 public class Message {
 
-    private String role;
+    public enum Roles { ASSISTANT, USER, SYSTEM }
+
+    private Roles role;
     private String content;
 
-    public Message(String role, String content) {
+    public Message(Roles role, String content) {
         this.role = role;
         this.content = content;
     }
 
-    public static Message of(String role, String content) {
+    public static Message of(Roles role, String content) {
         return new Message(role, content);
     }
 
-    public String getRole() {
+    public Roles getRole() {
         return role;
     }
 
@@ -26,7 +28,7 @@ public class Message {
         return content;
     }
 
-    public void setRole(String role) {
+    public void setRole(Roles role) {
         this.role = role;
     }
 

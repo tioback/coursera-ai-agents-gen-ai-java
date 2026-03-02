@@ -3,6 +3,8 @@ package com.renatoback.module1;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.renatoback.module1.Message.Roles;
+
 /**
  * Derived from the Coursera "Building AI Agents in Java" course materials.
  *
@@ -19,7 +21,7 @@ public class ProgrammaticPromptingBase64 {
         List<Message> messages = new ArrayList<>();
 
         // Add system message
-        messages.add(new Message("system",
+        messages.add(new Message(Roles.SYSTEM,
                 """
             - You are an expert software engineer that prefers functional programming in Java.
             - You can read byt cannot write natural language.
@@ -29,7 +31,7 @@ public class ProgrammaticPromptingBase64 {
         """.trim()));
 
         // Add user message
-        messages.add(new Message("user",
+        messages.add(new Message(Roles.USER,
                 "Write a function to swap the keys and values in a dictionary."));
 
         // Generate response using the LLM class

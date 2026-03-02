@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.renatoback.module1.Message.Roles;
 
 public class CodeGenerator {
 
@@ -30,12 +31,12 @@ public class CodeGenerator {
 
         // Add system message
         // Adjust this message if you want to focus on a specific programming language
-        messages.add(new Message("system",
+        messages.add(new Message(Roles.SYSTEM,
                 "You are an expert software engineer that writes clean functional code. " +
                         "You always document your functions."));
 
         // Add user message
-        messages.add(new Message("user",
+        messages.add(new Message(Roles.USER,
                 "Please implement: " + codeSpecJson));
 
         // Generate response using the LLM instance

@@ -8,6 +8,7 @@ import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import com.openai.models.chat.completions.ChatCompletionSystemMessageParam;
 import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
+import com.renatoback.module1.Message.Roles;
 
 import java.util.List;
 
@@ -38,13 +39,13 @@ public class OpenAiLlmClient implements LlmClient {
                 .maxCompletionTokens(maxTokens);
 
         for (Message message : messages) {
-            String role = message.getRole();
-            if ("system".equals(role)) {
+            Roles role = message.getRole();
+            if (Roles.SYSTEM.equals(role)) {
                 ChatCompletionSystemMessageParam systemMsg = ChatCompletionSystemMessageParam.builder()
                         .content(message.getContent())
                         .build();
                 paramsBuilder.addMessage(systemMsg);
-            } else if ("user".equals(role)) {
+            } else if (Roles.USER.equals(role)) {
                 ChatCompletionUserMessageParam userMsg = ChatCompletionUserMessageParam.builder()
                         .content(message.getContent())
                         .build();
