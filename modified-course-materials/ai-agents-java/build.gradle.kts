@@ -5,6 +5,15 @@ plugins {
 // Derived from Coursera "Building AI Agents in Java" course materials.
 // Modified to support local adaptations in `modified-course-materials/`.
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+    // Make source level explicit so IDEs (Cursor/VS Code Java) know text blocks are allowed
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
 group = "com.renatoback"
 version = "1.0-SNAPSHOT"
 
