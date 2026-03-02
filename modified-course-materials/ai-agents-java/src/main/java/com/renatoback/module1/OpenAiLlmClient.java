@@ -35,7 +35,7 @@ public class OpenAiLlmClient implements LlmClient {
 
         ChatCompletionCreateParams.Builder paramsBuilder = ChatCompletionCreateParams.builder()
                 .model(model)
-                .maxTokens(maxTokens);
+                .maxCompletionTokens(maxTokens);
 
         for (Message message : messages) {
             String role = message.getRole();
