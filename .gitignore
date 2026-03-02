@@ -71,3 +71,7 @@ replay_pid*
 
 # History files
 .history/
+
+# Local environment files
+.env
+**/.env
