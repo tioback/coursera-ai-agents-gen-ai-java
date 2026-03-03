@@ -118,7 +118,7 @@ public class QuasiAgentSolution {
 
                 %s
             
-            Don't write any documentation, nor tests yet.
+            Don't write any documentation, explanations, nor tests yet.
             """.formatted(userFunctionRequest)));
         // 2. Send to LLM
         String response = llm.generateResponse(conversationHistory);
@@ -133,10 +133,17 @@ public class QuasiAgentSolution {
     private String addDocumentation(String basicFunction, LLM llm) {
         // 1. Add user message asking for documentation to conversationHistory
         conversationHistory.add(Message.of(Roles.USER, """
-            Add comprehensive documentation to the following code:
+            Given the following code:
             ```java
             %s
             ```
+
+            Write comprehensive documentation containing:
+            - Function description
+            - Parameter descriptions
+            - Return value description
+            - Example usage
+            - Edge cases
             """.formatted(basicFunction)));
         // 2. Send to LLM
         String response = llm.generateResponse(conversationHistory);
