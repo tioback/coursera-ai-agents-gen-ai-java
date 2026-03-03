@@ -39,20 +39,20 @@ public class OpenAiLlmClient implements LlmClient {
                 .maxCompletionTokens(maxTokens);
 
         for (Message message : messages) {
-            Roles role = message.getRole();
+            Roles role = message.role();
             if (Roles.SYSTEM.equals(role)) {
                 ChatCompletionSystemMessageParam systemMsg = ChatCompletionSystemMessageParam.builder()
-                        .content(message.getContent())
+                        .content(message.content())
                         .build();
                 paramsBuilder.addMessage(systemMsg);
             } else if (Roles.USER.equals(role)) {
                 ChatCompletionUserMessageParam userMsg = ChatCompletionUserMessageParam.builder()
-                        .content(message.getContent())
+                        .content(message.content())
                         .build();
                 paramsBuilder.addMessage(userMsg);
             } else {
                 ChatCompletionAssistantMessageParam assistantMsg = ChatCompletionAssistantMessageParam.builder()
-                        .content(message.getContent())
+                        .content(message.content())
                         .build();
                 paramsBuilder.addMessage(assistantMsg);
             }

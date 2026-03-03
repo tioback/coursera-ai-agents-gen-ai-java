@@ -70,8 +70,8 @@ public class OllamaLlmClient implements LlmClient {
             ArrayNode msgArray = root.putArray("messages");
             for (Message message : messages) {
                 ObjectNode m = msgArray.addObject();
-                m.put("role", message.getRole().name().toLowerCase());
-                m.put("content", message.getContent());
+                m.put("role", message.role().name().toLowerCase());
+                m.put("content", message.content());
             }
 
             return MAPPER.writeValueAsString(root);
