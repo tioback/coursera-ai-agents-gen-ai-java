@@ -11,9 +11,11 @@ import java.util.List;
 public class LLM {
 
     private final LlmClient client;
+    private boolean isDebugging;
 
     public LLM() {
         this(LlmClients.fromEnv());
+        isDebugging = Boolean.parseBoolean(System.getenv("DEBUG_MODE"));
     }
 
     public LLM(LlmClient client) {
@@ -27,7 +29,14 @@ public class LLM {
      * @return The generated response as a String.
      */
     public String generateResponse(List<Message> messages) {
-        return client.generateResponse(messages);
+        if (isDebugging) {
+            System.err.println("PROMPT: " + messages);
+        }
+        String response = client.generateResponse(messages);
+        if (isDebugging) {
+            System.err.println("RESPONSE: " + response);
+        }
+        return response;
     }
 }
 
