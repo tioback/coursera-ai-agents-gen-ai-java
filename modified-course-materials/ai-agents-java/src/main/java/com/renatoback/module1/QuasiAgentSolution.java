@@ -193,7 +193,7 @@ public class QuasiAgentSolution {
 
     private String extractClassName(String code) {
         // Simple regex to find class name
-        Pattern pattern = Pattern.compile("class\\s+(\\w+)");
+        Pattern pattern = Pattern.compile("class\\s+(\\w+)\\s*\\{");
         Matcher matcher = pattern.matcher(code);
 
         if (matcher.find()) {
