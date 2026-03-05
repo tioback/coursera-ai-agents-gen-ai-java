@@ -3,7 +3,9 @@ package com.renatoback.module1;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.renatoback.module1.Message.Roles;
+import com.renatoback.core.LLM;
+import com.renatoback.core.Message;
+import com.renatoback.core.Message.Roles;
 
 /**
  * Derived from the Coursera "Building AI Agents in Java" course materials.
@@ -15,7 +17,7 @@ public class ProgrammaticPrompting {
 
     public static void main(String[] args) {
 
-        LLM llm = new LLM();
+        LLM<List<Message>> llm = LLM.fromEnv();
 
         // Create messages using the Message class
         List<Message> messages = new ArrayList<>();

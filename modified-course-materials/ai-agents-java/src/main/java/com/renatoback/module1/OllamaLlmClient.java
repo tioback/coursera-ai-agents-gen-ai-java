@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.renatoback.core.LlmClient;
+import com.renatoback.core.Message;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -19,7 +21,7 @@ import java.util.List;
  * Uses the /api/chat endpoint with {@code stream=false} so that
  * per-message roles are preserved.
  */
-public class OllamaLlmClient implements LlmClient {
+public class OllamaLlmClient implements LlmClient<List<Message>> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 

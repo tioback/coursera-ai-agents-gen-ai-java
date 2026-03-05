@@ -1,4 +1,4 @@
-package com.renatoback.module1;
+package com.renatoback.core;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

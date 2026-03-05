@@ -8,7 +8,9 @@ import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import com.openai.models.chat.completions.ChatCompletionSystemMessageParam;
 import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
-import com.renatoback.module1.Message.Roles;
+import com.renatoback.core.LlmClient;
+import com.renatoback.core.Message;
+import com.renatoback.core.Message.Roles;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ import java.util.List;
  * Derived from the Coursera "Building AI Agents in Java" course materials.
  * Modified: extracted OpenAI-specific logic behind {@link LlmClient}.
  */
-public class OpenAiLlmClient implements LlmClient {
+public class OpenAiLlmClient implements LlmClient<List<Message>> {
 
     private final ChatModel model;
     private final int maxTokens;

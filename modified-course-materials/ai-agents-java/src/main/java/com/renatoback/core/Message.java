@@ -1,4 +1,4 @@
-package com.renatoback.module1;
+package com.renatoback.core;
 
 /**
  * Derived from the Coursera "Building AI Agents in Java" course materials.

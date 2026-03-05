@@ -9,7 +9,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.renatoback.module1.Message.Roles;
+import com.renatoback.core.LLM;
+import com.renatoback.core.Message;
+import com.renatoback.core.Message.Roles;
 
 /**
  * This exercise consists of three prompts:
@@ -58,7 +60,6 @@ import com.renatoback.module1.Message.Roles;
 public class QuasiAgentSolution {
 
     private final List<Message> conversationHistory = new ArrayList<>();
-    private String targetClassName;
 
     public QuasiAgentSolution() {
         // Initialize with system message
@@ -87,7 +88,7 @@ public class QuasiAgentSolution {
                 // """));
     }
 
-    public void run(LLM llm, String userFunctionRequest) {
+    public void run(LLM<List<Message>> llm, String userFunctionRequest) {
         try {
             // Step 1: Generate basic function
             String basicFunction = generateBasicFunction(userFunctionRequest, llm);
@@ -111,7 +112,7 @@ public class QuasiAgentSolution {
         }
     }
 
-    private String generateBasicFunction(String userFunctionRequest, LLM llm) {
+    private String generateBasicFunction(String userFunctionRequest, LLM<List<Message>> llm) {
         // 1. Add user message to conversationHistory
         conversationHistory.add(Message.of(Roles.USER, """
             Inside a java class, create a function and implement it for the given specs:
@@ -130,7 +131,7 @@ public class QuasiAgentSolution {
         return code;
     }
 
-    private String addDocumentation(String basicFunction, LLM llm) {
+    private String addDocumentation(String basicFunction, LLM<List<Message>> llm) {
         // 1. Add user message asking for documentation to conversationHistory
         conversationHistory.add(Message.of(Roles.USER, """
             Given the following code:
@@ -155,7 +156,7 @@ public class QuasiAgentSolution {
         return code;
     }
 
-    private String addTestCases(String documentedFunction, LLM llm) {
+    private String addTestCases(String documentedFunction, LLM<List<Message>> llm) {
         // 1. Add user message asking for test cases to conversationHistory
         conversationHistory.add(Message.of(Roles.USER, """
             Given the class:
@@ -231,7 +232,7 @@ public class QuasiAgentSolution {
 
         try {
             // Create the LLM instance
-            LLM llm = new LLM();
+            LLM<List<Message>> llm = LLM.fromEnv();
 
             // Create the agent
             QuasiAgentSolution agent = new QuasiAgentSolution();

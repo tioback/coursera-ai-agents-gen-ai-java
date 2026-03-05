@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.renatoback.module1.Message.Roles;
+import com.renatoback.core.LLM;
+import com.renatoback.core.Message;
+import com.renatoback.core.Message.Roles;
 
 public class CodeGenerator {
 
     public static void main(String[] args) throws Exception {
-        LLM llm = new LLM();
+        LLM<List<Message>> llm = LLM.fromEnv();
 
         // Create code specification
         Map<String, Object> codeSpec = new HashMap<>();
