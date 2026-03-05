@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.renatoback.module1.OllamaLlmClient;
 import com.renatoback.module1.OpenAiLlmClient;
+import com.renatoback.module2.OllamaFunctionCallingLlmClient;
 import com.renatoback.module2.OpenAiFunctionCallingLlmClient;
 
 /**
@@ -49,8 +50,10 @@ public final class LlmClientFactory {
         Models model = resolveModel();
         return switch (model.getClient()) {
             case Providers.OPENAI -> new OpenAiFunctionCallingLlmClient();
-            case Providers.OLLAMA -> throw new UnsupportedOperationException(
-                    "Prompt/function-calling not yet supported for provider OLLAMA (model=" + model.name() + ")");
+            case Providers.OLLAMA -> new OllamaFunctionCallingLlmClient(
+                    getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+                    model.getModelName()
+            );
             default -> throw new IllegalArgumentException(
                     "Unsupported LLM_MODEL for Prompt: " + model.name()
                             + ". Supported: " + Arrays.toString(Models.values())
@@ -60,7 +63,7 @@ public final class LlmClientFactory {
 
     private static Models resolveModel() {
         return Models.valueOf(
-                getenv("LLM_MODEL", Models.OLLAMA_LLAMA2_LATEST.name()).toUpperCase()
+                getenv("LLM_MODEL", Models.OLLAMA_QWEN_EXPERT.name()).toUpperCase()
         );
     }
 
