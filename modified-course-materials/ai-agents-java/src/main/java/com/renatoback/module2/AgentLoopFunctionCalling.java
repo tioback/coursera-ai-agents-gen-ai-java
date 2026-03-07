@@ -50,6 +50,7 @@ public class AgentLoopFunctionCalling {
      * @return The parsed Action object
      * @throws Exception If the response cannot be parsed
      */
+    @SuppressWarnings("unchecked")
     private Action parseAction(String response) throws Exception {
         Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
         String toolName = (String) responseMap.get("tool");

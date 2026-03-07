@@ -1,5 +1,6 @@
 package com.renatoback.module2;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -105,7 +106,6 @@ public class OllamaFunctionCallingLlmClient implements LlmClient<Prompt> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private String parseResponse(String body, List<Tool> tools) {
         try {
             JsonNode root = MAPPER.readTree(body);
@@ -122,7 +122,7 @@ public class OllamaFunctionCallingLlmClient implements LlmClient<Prompt> {
                 JsonNode argsNode = fnNode.path("arguments");
 
                 Map<String, Object> args = argsNode.isObject()
-                        ? MAPPER.convertValue(argsNode, Map.class)
+                        ? MAPPER.convertValue(argsNode, new TypeReference<Map<String, Object>>() {})
                         : Map.of();
 
                 ObjectNode result = MAPPER.createObjectNode();

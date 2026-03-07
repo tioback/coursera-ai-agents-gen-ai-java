@@ -12,6 +12,7 @@ import java.util.*;
 
 public class LLMExampleWithFunctionCalling {
 
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) {
         // Initialize the LLM
         LLM<Prompt> llm = LLM.promptFromEnv();
